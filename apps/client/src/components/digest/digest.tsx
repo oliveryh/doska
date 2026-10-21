@@ -20,6 +20,8 @@ interface IProps {
   boards: Dashboard[]
   hiddenBoards: string[]
   onToggleBoard: (id: string) => void
+  priorityFilters: string[]
+  onTogglePriority: (id: string) => void
   /** The card open in the panel, highlighted in the list. */
   openCardId: string | null
   onOpenCard: (entry: DigestCard) => void
@@ -37,6 +39,8 @@ export function Digest({
   boards,
   hiddenBoards,
   onToggleBoard,
+  priorityFilters,
+  onTogglePriority,
   openCardId,
   onOpenCard,
 }: IProps) {
@@ -50,6 +54,8 @@ export function Digest({
         boards={boards}
         hiddenBoards={hiddenBoards}
         onToggleBoard={onToggleBoard}
+        priorityFilters={priorityFilters}
+        onTogglePriority={onTogglePriority}
       />
       <TagFilterPills />
 

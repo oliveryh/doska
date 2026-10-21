@@ -1,6 +1,6 @@
 import { priorityRank } from "@doska/tokens"
 import { UPCOMING_DAYS } from "@doska/utils"
-import type { Board, Card, Column } from "../../types"
+import type { Board, Card, Column, Dashboard } from "../../types"
 import { addDays, byPosition, todayIso } from "../../utils"
 import { db } from "../db/db"
 import { live } from "./live"
@@ -61,25 +61,21 @@ function bounds(filter: DigestFilter): [string, string] {
 }
 
 /**
- * Cards across every board whose deadline falls in the filter's range, in date
- * order.
+ * Turns raw cards into digest entries, dropping any whose column or board is
+ * tombstoned — gone from the UI's point of view, even though the card's own
+ * record is still live. Shared by every digest source, deadline-bound or not.
  */
-export async function getDigest(filter: DigestFilter): Promise<DigestCard[]> {
-  const [from, to] = bounds(filter)
-  const [cards, columns, dashboards] = await Promise.all([
-    db.getCardsByDeadline(from, to),
-    db.getColumns(),
-    db.getDashboards(),
-  ])
-
+function toDigestCards(
+  cards: Card[],
+  columns: Column[],
+  dashboards: Dashboard[]
+): DigestCard[] {
   const liveColumns = columns.filter(live)
   const columnById = new Map(liveColumns.map((c) => [c.id, c]))
   const boardById = new Map(dashboards.filter(live).map((d) => [d.id, d]))
   const targets = targetsByBoard(liveColumns)
 
   return cards.filter(live).flatMap((card) => {
-    // A card whose column or board is tombstoned is gone from the UI's point of
-    // view, even though its own record is still live.
     const column = columnById.get(card.columnId)
     const board = column && boardById.get(column.dashboardId)
     if (!column || !board) return []
@@ -97,6 +93,34 @@ export async function getDigest(filter: DigestFilter): Promise<DigestCard[]> {
       },
     ]
   })
+}
+
+/**
+ * Cards across every board whose deadline falls in the filter's range, in date
+ * order.
+ */
+export async function getDigest(filter: DigestFilter): Promise<DigestCard[]> {
+  const [from, to] = bounds(filter)
+  const [cards, columns, dashboards] = await Promise.all([
+    db.getCardsByDeadline(from, to),
+    db.getColumns(),
+    db.getDashboards(),
+  ])
+  return toDigestCards(cards, columns, dashboards)
+}
+
+/**
+ * Every live card on every board, deadlined or not. Deliberately unbounded by
+ * date — the priority filter's whole point is surfacing undated high-priority
+ * cards that {@link getDigest} never returns.
+ */
+export async function getAllLiveCards(): Promise<DigestCard[]> {
+  const [cards, columns, dashboards] = await Promise.all([
+    db.getCards(),
+    db.getColumns(),
+    db.getDashboards(),
+  ])
+  return toDigestCards(cards, columns, dashboards)
 }
 
 export interface DigestGroup {
