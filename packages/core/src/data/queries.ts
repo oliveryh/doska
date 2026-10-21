@@ -213,6 +213,17 @@ export function useDigest(filter: DigestFilter) {
   })
 }
 
+/** Every live card across every board, deadlined or not. Only fetched while
+ * the priority filter is active — see {@link api.getAllLiveCards}. */
+export function useAllCards(enabled: boolean) {
+  return useQuery({
+    queryKey: keys.digestAll,
+    queryFn: () => api.getAllLiveCards(),
+    networkMode: "always",
+    enabled,
+  })
+}
+
 /** The board an arbitrary card belongs to — see {@link api.getCardDeckId}. */
 export function useCardDeckId(id: string | null) {
   return useQuery({

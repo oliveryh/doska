@@ -2,6 +2,7 @@ import { Button, cn } from "@doska/ui-kit"
 import type { Dashboard, DigestFilter } from "@doska/core"
 import { PageHeader } from "../app/page-header"
 import { BoardFilter } from "./board-filter"
+import { PriorityFilter } from "./priority-filter"
 
 // const FILTERS: { id: DigestFilter; label: string }[] = [
 //   // { id: "today", label: "Today" },
@@ -16,6 +17,8 @@ interface IProps {
   boards: Dashboard[]
   hiddenBoards: string[]
   onToggleBoard: (id: string) => void
+  priorityFilters: string[]
+  onTogglePriority: (id: string) => void
 }
 
 export function DigestHeader({
@@ -26,11 +29,17 @@ export function DigestHeader({
   boards,
   hiddenBoards,
   onToggleBoard,
+  priorityFilters,
+  onTogglePriority,
 }: IProps) {
   return (
     <PageHeader>
       <h1 className="text-base font-semibold">Upcoming</h1>
       <div className="ml-auto flex items-center gap-1">
+        <PriorityFilter
+          active={priorityFilters}
+          onTogglePriority={onTogglePriority}
+        />
         <BoardFilter
           boards={boards}
           hidden={hiddenBoards}
