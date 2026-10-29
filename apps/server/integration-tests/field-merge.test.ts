@@ -45,6 +45,7 @@ function card(patch: Partial<Card> = {}): Card {
     deletedAt: null,
     stamps: stampAll(CARD_GROUPS, created),
     bodyConflict: null,
+    completedAt: null,
     ...patch,
   }
 }

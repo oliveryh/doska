@@ -22,6 +22,20 @@ const deadline = z
   .nullable()
   .describe("Calendar date, no time — this is what the upcoming view lists")
 
+/**
+ * `completedAt` tracks whether the card is currently in a done column,
+ * separate from `stamps.place` (which also moves on reordering). `target` is
+ * `null` when the move doesn't cross a column boundary.
+ */
+function nextCompletedAt(
+  existing: Card,
+  target: { done: boolean } | null
+): number | null {
+  if (!target) return existing.completedAt
+  if (target.done) return existing.completedAt ?? Date.now()
+  return null
+}
+
 export const PRIORITY_IDS = PRIORITIES.map((p) => p.id) as [string, ...string[]]
 
 const priority = z
@@ -111,6 +125,7 @@ export function registerCardTools(server: McpServer, board: Board): void {
           deletedAt: null,
           stamps: {},
           bodyConflict: null,
+          completedAt: null,
         },
         CARD_GROUPS,
         now
@@ -226,7 +241,11 @@ export function registerCardTools(server: McpServer, board: Board): void {
     async ({ boardId, cardId, columnId, place, anchorCardId }) => {
       const existing = await board.card(boardId, cardId)
       const target = columnId ?? existing.columnId
-      if (columnId) await board.column(boardId, columnId)
+      const targetColumn = columnId
+        ? await board.column(boardId, columnId)
+        : null
+
+      const completedAt = nextCompletedAt(existing, targetColumn)
 
       const card = touchCard(
         {
@@ -238,8 +257,11 @@ export function registerCardTools(server: McpServer, board: Board): void {
             place,
             anchorId: anchorCardId,
           }),
+          completedAt,
         },
-        ["place"],
+        completedAt !== existing.completedAt
+          ? ["place", "completed"]
+          : ["place"],
         board.now()
       )
       await board.pushBoard(boardId, [{ store: "cards", record: card }])
@@ -277,6 +299,8 @@ export function registerCardTools(server: McpServer, board: Board): void {
       if (existing.columnId === target.id)
         return reply({ ...shapeCard(existing), column: target.title })
 
+      const completedAt = nextCompletedAt(existing, target)
+
       const card = touchCard(
         {
           ...existing,
@@ -285,8 +309,11 @@ export function registerCardTools(server: McpServer, board: Board): void {
             cards.filter((c) => c.columnId === target.id),
             "top"
           ),
+          completedAt,
         },
-        ["place"],
+        completedAt !== existing.completedAt
+          ? ["place", "completed"]
+          : ["place"],
         board.now()
       )
       await board.pushBoard(boardId, [{ store: "cards", record: card }])

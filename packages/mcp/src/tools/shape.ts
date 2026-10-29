@@ -27,6 +27,8 @@ export function shapeCard(card: Card) {
       mime,
       size,
     })),
+    // Epoch ms the card last moved into a done column; null otherwise.
+    completedAt: card.completedAt,
   }
 }
 

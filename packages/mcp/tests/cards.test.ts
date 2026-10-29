@@ -38,6 +38,7 @@ const card: Card = {
   deletedAt: null,
   stamps: {},
   bodyConflict: null,
+  completedAt: null,
 }
 
 const member: Member = {
