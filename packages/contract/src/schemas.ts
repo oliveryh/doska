@@ -25,6 +25,7 @@ export const CARD_GROUPS = [
   "attachments",
   "deleted",
   "conflict",
+  "completed",
 ] as const
 
 export const COLUMN_GROUPS = [
@@ -88,6 +89,12 @@ export const CardSchema = z.object({
     .object({ body: z.string(), at: z.number() })
     .nullable()
     .default(null),
+  /**
+   * When the card last moved into a done column; `null` while it isn't in
+   * one. Set/cleared alongside `columnId`, not `updatedAt` or `stamps.place`
+   * (which also moves on reordering), so it's a reliable completion marker.
+   */
+  completedAt: z.number().nullable().default(null),
 })
 
 /** Exhaustive on purpose: a field without a group is a type error. */
@@ -109,6 +116,7 @@ export const CARD_FIELD_GROUP: Record<
   attachments: "attachments",
   deletedAt: "deleted",
   bodyConflict: "conflict",
+  completedAt: "completed",
 }
 
 export const ColumnSchema = z.object({

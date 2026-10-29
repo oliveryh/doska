@@ -18,6 +18,7 @@ const card: Card = {
   deletedAt: null,
   stamps: {},
   bodyConflict: null,
+  completedAt: null,
 }
 
 const column: Column = {
@@ -58,6 +59,7 @@ describe("touchCard", () => {
       attachments: 10,
       deleted: 10,
       conflict: 10,
+      completed: 10,
     })
   })
 

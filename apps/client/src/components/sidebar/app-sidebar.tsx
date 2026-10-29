@@ -9,12 +9,10 @@ import {
 import { usePublishedBoards, useSharedBoards } from "@doska/core"
 import { useAuth } from "@/lib/hooks"
 import { AppSidebarHeader } from "./app-sidebar-header"
-import { ThemeToggle } from "@/components/theme-toggle"
 import { DashboardsList } from "./dashboards-list/dashboards-list"
 import { SidebarAccount } from "./sidebar-account"
 import { SettingsButton } from "@/components/settings/settings-button"
 import { TrashButton } from "@/components/trash/trash-button"
-import { HistoryButton } from "@/components/history/history-button"
 import { UpcomingButton } from "@/components/digest/upcoming-button"
 import { isDesktop } from "@/lib/platform"
 
@@ -42,8 +40,6 @@ export function AppSidebar() {
         />
       </SidebarContent>
       <SidebarFooter>
-        <ThemeToggle />
-        <HistoryButton />
         <SettingsButton />
         <SidebarAccount />
       </SidebarFooter>

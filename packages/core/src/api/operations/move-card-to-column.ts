@@ -8,6 +8,9 @@ import { touchCard } from "../sync/touch"
 import { live } from "./live"
 import { newId } from "./new-id"
 
+const PLACE_ONLY = ["place"] as const
+const GROUPS_WITH_COMPLETED = ["place", "completed"] as const
+
 /**
  * Moves a card to the top of another column, for callers that know the
  * destination but not what's in it — the digest loads no board, so it can't
@@ -32,8 +35,14 @@ export async function moveCardToColumn(
   const position = generateKeyBetween(null, cards[0]?.position ?? null)
 
   const from = await db.getColumn(card.columnId)
+  const completedAt = to.done ? (card.completedAt ?? Date.now()) : null
+  const groups =
+    completedAt !== card.completedAt ? GROUPS_WITH_COMPLETED : PLACE_ONLY
+
   if (!from || from.dashboardId === to.dashboardId) {
-    await db.setCard(touchCard({ ...card, columnId, position }, ["place"]))
+    await db.setCard(
+      touchCard({ ...card, columnId, position, completedAt }, groups)
+    )
     sync.markDirty("cards", id)
     if (from && from.id !== to.id)
       await recordHistory.card(to.dashboardId, id, card.title, "move", {
@@ -46,7 +55,7 @@ export async function moveCardToColumn(
   const copyId = newId("card")
   await db.setCard(
     touchCard(
-      { ...card, id: copyId, columnId, position, number: null },
+      { ...card, id: copyId, columnId, position, number: null, completedAt },
       CARD_GROUPS
     )
   )

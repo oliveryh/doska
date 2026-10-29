@@ -66,6 +66,7 @@ export async function readSince(
         deletedAt: r.deletedAt,
         stamps: r.stamps,
         bodyConflict: r.bodyConflict ?? null,
+        completedAt: r.completedAt,
       },
     })
   }

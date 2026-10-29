@@ -1,4 +1,4 @@
-import { SidebarMenuButton, cn } from "@doska/ui-kit"
+import { SidebarMenuButton, cn, useSidebar } from "@doska/ui-kit"
 import { Globe, Users } from "lucide-react"
 import { useMemo } from "react"
 import type { Dashboard } from "@doska/core"
@@ -19,6 +19,7 @@ export function BoardItem({
   isShared,
 }: IProps) {
   const { selectDashboard } = useDashboardNav()
+  const { isMobile, setOpenMobile } = useSidebar()
   const { target } = useCardDrop()
   const isCardTarget = target?.kind === "board" && target.id === dashboard.id
   const marker = useMemo(() => {
@@ -31,7 +32,10 @@ export function BoardItem({
     <SidebarMenuButton
       isActive={isActive}
       tooltip={dashboard.title}
-      onClick={() => selectDashboard(dashboard.id)}
+      onClick={() => {
+        selectDashboard(dashboard.id)
+        if (isMobile) setOpenMobile(false)
+      }}
       data-drop-board={isActive ? undefined : dashboard.id}
       className={cn(
         isCardTarget && "bg-sidebar-accent ring-2 ring-primary/60 ring-inset"

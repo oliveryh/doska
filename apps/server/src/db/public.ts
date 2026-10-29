@@ -190,6 +190,7 @@ export async function readPublicBoard(
         attachments: cards.attachments,
         updatedAt: cards.updatedAt,
         deletedAt: cards.deletedAt,
+        completedAt: cards.completedAt,
       })
       .from(cards)
       .where(and(eq(cards.boardId, boardId), isNull(cards.deletedAt))),
