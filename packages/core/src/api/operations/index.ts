@@ -25,6 +25,7 @@ export {
   boardDigest,
   getAllLiveCards,
   getDigest,
+  getIncompleteCounts,
   groupBoardCards,
   groupByDeadline,
   upcomingBounds,

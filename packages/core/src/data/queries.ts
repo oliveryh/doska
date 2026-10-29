@@ -224,6 +224,15 @@ export function useAllCards(enabled: boolean) {
   })
 }
 
+/** Not-done card count per board, for the sidebar's per-board badge. */
+export function useIncompleteCounts() {
+  return useQuery({
+    queryKey: keys.incompleteCounts,
+    queryFn: () => api.getIncompleteCounts(),
+    networkMode: "always",
+  })
+}
+
 /** The board an arbitrary card belongs to — see {@link api.getCardDeckId}. */
 export function useCardDeckId(id: string | null) {
   return useQuery({

@@ -229,3 +229,14 @@ export function groupBoardCards(
   }
   return groups
 }
+
+/** Not-done card count per board, for the sidebar's per-board badge. */
+export async function getIncompleteCounts(): Promise<Record<string, number>> {
+  const entries = await getAllLiveCards()
+  const counts: Record<string, number> = {}
+  for (const entry of entries) {
+    if (entry.isDone) continue
+    counts[entry.boardId] = (counts[entry.boardId] ?? 0) + 1
+  }
+  return counts
+}
