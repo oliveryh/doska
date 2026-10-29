@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test"
-import { TEST_CREDENTIALS, signIn, signOut } from "../helpers"
+import { TEST_CREDENTIALS, sidebarSignIn, signIn, signOut } from "../helpers"
 
 /**
  * The sign-in flow gates sync. These drive it from the sidebar account control
@@ -10,9 +10,7 @@ test.describe("authentication", { tag: "@container" }, () => {
     page,
   }) => {
     await page.goto("/")
-    await page
-      .getByRole("button", { name: "Sign in to sync", exact: true })
-      .click()
+    await sidebarSignIn(page).click()
 
     await page.getByPlaceholder("Login").fill("e2e")
     await page.getByPlaceholder("Password").fill("wrong-password")
@@ -35,9 +33,7 @@ test.describe("authentication", { tag: "@container" }, () => {
     await signOut(page)
 
     // Back to signed-out: the sign-in control is offered again.
-    await expect(
-      page.getByRole("button", { name: "Sign in to sync", exact: true })
-    ).toBeVisible()
+    await expect(sidebarSignIn(page)).toBeVisible()
     await expect(page.getByRole("button", { name: "Sign out" })).toHaveCount(0)
   })
 })
