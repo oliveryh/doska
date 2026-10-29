@@ -6,7 +6,11 @@ import {
   cn,
 } from "@doska/ui-kit"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
-import { useCollapsedFolders, useSidebarTree } from "@doska/core"
+import {
+  useCollapsedFolders,
+  useIncompleteCounts,
+  useSidebarTree,
+} from "@doska/core"
 import { useState } from "react"
 import { DROP_ANIMATION_MS } from "@/lib/hooks"
 import { OrderAnimator } from "../../card/order-animator"
@@ -29,6 +33,7 @@ export function DashboardsList({
   publishedIds,
 }: IProps) {
   const { data: nodes = [] } = useSidebarTree()
+  const { data: incompleteCounts = {} } = useIncompleteCounts()
   const [renamingId, setRenamingId] = useState<string | null>(null)
   const collapsedIds = useCollapsedFolders()
   const rows = flattenTree(nodes, collapsedIds)
@@ -118,6 +123,9 @@ export function DashboardsList({
                                     isActive={row.id === activeDashboardId}
                                     isPublished={published.has(row.id)}
                                     isShared={shared.has(row.id)}
+                                    incompleteCount={
+                                      incompleteCounts[row.dashboard.id]
+                                    }
                                   />
                                 </div>
                               </div>
