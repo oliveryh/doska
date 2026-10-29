@@ -1,5 +1,5 @@
 import { test, expect, type Page } from "@playwright/test"
-import { createBoard, signIn, signOut } from "../helpers"
+import { createBoard, sidebarSignIn, signIn, signOut } from "../helpers"
 
 /**
  * The device holds one account's data at a time. Signing in as someone else
@@ -16,9 +16,7 @@ const WARNING = /will become part of the account you sign in with/
 /** Opens the sign-in dialog without submitting it. */
 async function openSignIn(page: Page): Promise<void> {
   await page.goto("/")
-  await page
-    .getByRole("button", { name: "Sign in to sync", exact: true })
-    .click()
+  await sidebarSignIn(page).click()
   await expect(page.getByPlaceholder("Login")).toBeVisible()
 }
 

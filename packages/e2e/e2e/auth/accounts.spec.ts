@@ -1,5 +1,5 @@
 import { test, expect, type Page } from "@playwright/test"
-import { signIn, signOut } from "../helpers"
+import { sidebarSignIn, signIn, signOut } from "../helpers"
 
 /**
  * Account management: the owner creates accounts, deactivates them and resets
@@ -111,9 +111,7 @@ test.describe("account management", () => {
     await signOut(page)
 
     await page.goto("/")
-    await page
-      .getByRole("button", { name: "Sign in to sync", exact: true })
-      .click()
+    await sidebarSignIn(page).click()
     await page.getByPlaceholder("Login").fill(account.login)
     await page.getByPlaceholder("Password").fill(account.password)
     await page.getByRole("button", { name: "Sign in", exact: true }).click()
@@ -176,9 +174,7 @@ test.describe("account management", () => {
     await signOut(page)
 
     await page.goto("/")
-    await page
-      .getByRole("button", { name: "Sign in to sync", exact: true })
-      .click()
+    await sidebarSignIn(page).click()
     await page.getByPlaceholder("Login").fill(login)
     await page.getByPlaceholder("Password").fill("first-pass")
     await page.getByRole("button", { name: "Sign in", exact: true }).click()

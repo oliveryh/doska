@@ -26,7 +26,7 @@ const APP_ORIGIN = process.env.BASE_URL || "http://localhost:4173"
  * an open board shows a second control with the same accessible name (the
  * deck's sync indicator turns into one while signed out).
  */
-function sidebarSignIn(page: Page) {
+export function sidebarSignIn(page: Page) {
   return page
     .locator('[data-slot="sidebar"]')
     .getByRole("button", { name: "Sign in to sync", exact: true })

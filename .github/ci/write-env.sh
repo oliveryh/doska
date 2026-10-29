@@ -9,4 +9,5 @@ AUTH_SECRET=$(openssl rand -hex 32)
 POSTGRES_PASSWORD=smoke-postgres
 WEB_HOST_BIND=
 BASE_URL=${1:?usage: write-env.sh <base-url>}
+DOCKER_IMAGE_OWNER=${GITHUB_REPOSITORY_OWNER:-romenkova}
 EOF
