@@ -224,11 +224,12 @@ export function useAllCards(enabled: boolean) {
   })
 }
 
-/** Not-done card count per board, for the sidebar's per-board badge. */
-export function useIncompleteCounts() {
+/** Not-done card count per board, for the sidebar's per-board badge.
+ * Pass the hide-backlog toggle's state so the count matches what's visible. */
+export function useIncompleteCounts(excludeBacklog = false) {
   return useQuery({
-    queryKey: keys.incompleteCounts,
-    queryFn: () => api.getIncompleteCounts(),
+    queryKey: keys.incompleteCounts(excludeBacklog),
+    queryFn: () => api.getIncompleteCounts(excludeBacklog),
     networkMode: "always",
   })
 }

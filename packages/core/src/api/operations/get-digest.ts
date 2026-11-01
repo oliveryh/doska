@@ -2,6 +2,7 @@ import { priorityRank } from "@doska/tokens"
 import { UPCOMING_DAYS } from "@doska/utils"
 import type { Board, Card, Column, Dashboard } from "../../types"
 import { addDays, byPosition, todayIso } from "../../utils"
+import { BACKLOG_COLUMN_TITLE } from "../../data/hide-backlog"
 import { db } from "../db/db"
 import { live } from "./live"
 
@@ -230,12 +231,17 @@ export function groupBoardCards(
   return groups
 }
 
-/** Not-done card count per board, for the sidebar's per-board badge. */
-export async function getIncompleteCounts(): Promise<Record<string, number>> {
+/** Not-done card count per board, for the sidebar's per-board badge.
+ * `excludeBacklog` drops cards sitting in a Backlog column too, to match
+ * what's actually visible when the hide-backlog toggle is on. */
+export async function getIncompleteCounts(
+  excludeBacklog = false
+): Promise<Record<string, number>> {
   const entries = await getAllLiveCards()
   const counts: Record<string, number> = {}
   for (const entry of entries) {
     if (entry.isDone) continue
+    if (excludeBacklog && entry.columnTitle === BACKLOG_COLUMN_TITLE) continue
     counts[entry.boardId] = (counts[entry.boardId] ?? 0) + 1
   }
   return counts

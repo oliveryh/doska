@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { DragDropContext, type DropResult } from "@hello-pangea/dnd"
 import {
+  BACKLOG_COLUMN_TITLE,
   type Board,
   type Dashboard,
   type DashboardView,
@@ -9,6 +10,8 @@ import {
   filterByUsers,
   groupCardsByColumn,
   sortCards,
+  toggleHideBacklog,
+  useHideBacklog,
   type CardPatch,
 } from "@doska/core"
 import { useLandingSlot } from "@/lib/hooks"
@@ -23,7 +26,6 @@ import { TagFilterPills } from "./deck-header/tag-filter-pills"
 import { DeckRowsView } from "./deck-rows-view"
 import { SyncIndicator } from "./sync-indicator"
 import { useSidebarCardDrop } from "./use-sidebar-card-drop"
-import { BACKLOG_COLUMN_TITLE, useHideBacklog } from "./use-hide-backlog"
 
 interface IProps {
   dashboard: Dashboard
@@ -73,7 +75,7 @@ export function Deck({
 }: IProps) {
   const [isDragging, setIsDragging] = useState(false)
   const sidebarDrop = useSidebarCardDrop(isDragging)
-  const { hideBacklog, toggleHideBacklog } = useHideBacklog()
+  const hideBacklog = useHideBacklog()
 
   const { tagFilters = [], userFilters = [] } = useDeck()
   const isFiltered = tagFilters.length > 0 || userFilters.length > 0

@@ -19,8 +19,10 @@ export const keys = {
   digestFilter: (filter: DigestFilter) => ["digest", filter] as const,
   /** Every live card, unbounded by date — backs the priority filter. */
   digestAll: ["digest", "all"] as const,
-  /** Not-done card count per board — backs the sidebar's per-board badge. */
-  incompleteCounts: ["digest", "incomplete-counts"] as const,
+  /** Not-done card count per board — backs the sidebar's per-board badge.
+   * Keyed on `excludeBacklog` too, so toggling it doesn't serve a stale count. */
+  incompleteCounts: (excludeBacklog: boolean) =>
+    ["digest", "incomplete-counts", excludeBacklog] as const,
   cardDeck: (id: string) => ["card-deck", id] as const,
   /** The bare key is the invalidation prefix for every card's column. */
   cardCols: ["card-col"] as const,

@@ -8,6 +8,7 @@ import {
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import {
   useCollapsedFolders,
+  useHideBacklog,
   useIncompleteCounts,
   useSidebarTree,
 } from "@doska/core"
@@ -33,7 +34,8 @@ export function DashboardsList({
   publishedIds,
 }: IProps) {
   const { data: nodes = [] } = useSidebarTree()
-  const { data: incompleteCounts = {} } = useIncompleteCounts()
+  const hideBacklog = useHideBacklog()
+  const { data: incompleteCounts = {} } = useIncompleteCounts(hideBacklog)
   const [renamingId, setRenamingId] = useState<string | null>(null)
   const collapsedIds = useCollapsedFolders()
   const rows = flattenTree(nodes, collapsedIds)
