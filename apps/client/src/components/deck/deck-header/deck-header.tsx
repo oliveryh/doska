@@ -4,6 +4,7 @@ import { PageHeader } from "../../app/page-header"
 import { BoardActionsMenu } from "./board-actions-menu"
 import { SearchButton } from "./search-button"
 import { RowViewButton } from "./row-view-button"
+import { HideBacklogButton } from "./hide-backlog-button"
 import { ShareButton } from "./share-button"
 import { UserFilter } from "./user-filter"
 import type { Column, DashboardView } from "@doska/core"
@@ -16,6 +17,8 @@ interface IProps {
   columns: Column[]
   sort: string[]
   view: DashboardView
+  hideBacklog: boolean
+  onToggleHideBacklog: () => void
   onRename: (name: string) => void
   onDelete: () => void
   onReorderColumns: (changed: Column[]) => void
@@ -31,6 +34,8 @@ export function DeckHeader({
   columns,
   sort,
   view,
+  hideBacklog,
+  onToggleHideBacklog,
   onRename,
   onDelete,
   onReorderColumns,
@@ -62,6 +67,10 @@ export function DeckHeader({
           <Plus />
         </Button>
         <SearchButton boardId={boardId} />
+        <HideBacklogButton
+          hideBacklog={hideBacklog}
+          onToggle={onToggleHideBacklog}
+        />
         <RowViewButton view={view} onChangeView={onChangeView} />
         <ShareButton boardId={boardId} title={title} />
         {isDesktop() && <VaultButton boardId={boardId} />}

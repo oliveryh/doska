@@ -23,6 +23,7 @@ import { TagFilterPills } from "./deck-header/tag-filter-pills"
 import { DeckRowsView } from "./deck-rows-view"
 import { SyncIndicator } from "./sync-indicator"
 import { useSidebarCardDrop } from "./use-sidebar-card-drop"
+import { BACKLOG_COLUMN_TITLE, useHideBacklog } from "./use-hide-backlog"
 
 interface IProps {
   dashboard: Dashboard
@@ -72,6 +73,7 @@ export function Deck({
 }: IProps) {
   const [isDragging, setIsDragging] = useState(false)
   const sidebarDrop = useSidebarCardDrop(isDragging)
+  const { hideBacklog, toggleHideBacklog } = useHideBacklog()
 
   const { tagFilters = [], userFilters = [] } = useDeck()
   const isFiltered = tagFilters.length > 0 || userFilters.length > 0
@@ -80,7 +82,9 @@ export function Deck({
     ...board,
     cards: filterByUsers(filterByTags(board.cards, tagFilters), userFilters),
   }
-  const grouped = groupCardsByColumn(visible)
+  const grouped = groupCardsByColumn(visible).filter(
+    ({ column }) => !hideBacklog || column.title !== BACKLOG_COLUMN_TITLE
+  )
   const orderedColumns = [...board.columns].sort(byPosition)
   const sort = dashboard.sort ?? []
   const { hold, release, place } = useLandingSlot(sort.length > 0)
@@ -117,6 +121,8 @@ export function Deck({
                 onChangeSort={onChangeSort}
                 view={view}
                 onChangeView={onChangeView}
+                hideBacklog={hideBacklog}
+                onToggleHideBacklog={toggleHideBacklog}
                 onAddCard={() => {
                   if (orderedColumns[0]) onAddAndOpenCard(orderedColumns[0].id)
                 }}
