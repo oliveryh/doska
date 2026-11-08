@@ -87,6 +87,7 @@ export async function applyOne(
         stamps: record.stamps,
         bodyConflict: record.bodyConflict,
         completedAt: record.completedAt,
+        createdAt: record.createdAt,
         seq: nextSeq,
       }
       let { record: card, changed } = mergeRecord(

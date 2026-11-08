@@ -39,6 +39,7 @@ const card: Card = {
   stamps: {},
   bodyConflict: null,
   completedAt: null,
+  createdAt: null,
 }
 
 const member: Member = {
@@ -148,6 +149,15 @@ describe("create_card", () => {
     })
 
     expect(pushedCard().record.users).toEqual(["user-1"])
+  })
+
+  it("records when the card was created", async () => {
+    const { call, pushedCard } = cardTools()
+    await call("create_card", { columnId: "col-1", title: "New" })
+
+    const { record } = pushedCard()
+    expect(record.createdAt).toBe(now)
+    expect(record.stamps.created).toBe(now)
   })
 })
 
