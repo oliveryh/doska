@@ -26,13 +26,19 @@ export {
   getAllLiveCards,
   getDigest,
   getIncompleteCounts,
+  getIncompletePriorityCounts,
   groupBoardCards,
   groupByDeadline,
   upcomingBounds,
 } from "./get-digest"
 export { getCardDeckId } from "./get-card-deck-id"
 export { getCardCol } from "./get-card-col"
-export type { DigestCard, DigestFilter, DigestGroup } from "./get-digest"
+export type {
+  DigestCard,
+  DigestFilter,
+  DigestGroup,
+  PriorityCounts,
+} from "./get-digest"
 export { createDashboard } from "./create-dashboard"
 export { renameDashboard } from "./rename-dashboard"
 export { setDashboardSort } from "./set-dashboard-sort"

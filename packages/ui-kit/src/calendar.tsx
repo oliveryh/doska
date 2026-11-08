@@ -18,6 +18,7 @@ function Calendar({
   className,
   classNames,
   showOutsideDays = true,
+  weekStartsOn = 1,
   captionLayout = "label",
   buttonVariant = "ghost",
   locale,
@@ -32,6 +33,7 @@ function Calendar({
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
+      weekStartsOn={weekStartsOn}
       className={cn(
         "group/calendar bg-background p-2 [--cell-radius:var(--radius-md)] [--cell-size:--spacing(7)] in-data-[slot=card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent",
         String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,

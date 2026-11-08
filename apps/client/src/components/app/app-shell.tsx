@@ -3,12 +3,13 @@ import type { ReactNode } from "react"
 import { AppSidebar } from "@/components"
 import { CardRevealProvider } from "@/providers/card-reveal/card-reveal-provider"
 import { CardDropProvider } from "@/providers/card-drop/card-drop-provider"
+import { SearchProvider } from "@/providers/search/search-provider"
 import { CardPanel } from "@/components/card-panel/card-panel"
 import {
   DeckProvider,
   type DeckContextValue,
 } from "@/providers/deck/deck-context"
-import { useIsPanelOpen, useUndoShortcut } from "@/lib/hooks"
+import { useIsPanelOpen, useSyncOnFocus, useUndoShortcut } from "@/lib/hooks"
 
 interface IProps {
   deck: DeckContextValue
@@ -22,25 +23,31 @@ export function AppShell({ deck, cardCloseHref, children }: IProps) {
   // ⌘Z takes back the last delete from anywhere in the app.
   useUndoShortcut()
 
+  // Other boards only sync while open, so catch them up when the window returns.
+  useSyncOnFocus()
+
   return (
     <DeckProvider value={deck}>
       <CardRevealProvider>
         <CardDropProvider>
-          {/* `--app-height` tracks the keyboard on touch devices; `svh` elsewhere. */}
-          <SidebarProvider className="h-(--app-height,100svh)">
-            <AppSidebar />
-            <SidebarInset
-              className={cn(
-                "min-w-0 overflow-hidden border border-border",
-                "md:peer-data-[state=collapsed]:border-0",
-                "md:transition-[margin,border-radius] md:duration-200 md:ease-linear",
-                isPanelOpen && "md:mr-0 md:peer-data-[state=collapsed]:border-r"
-              )}
-            >
-              {children}
-            </SidebarInset>
-            {cardCloseHref && <CardPanel closeHref={cardCloseHref} />}
-          </SidebarProvider>
+          <SearchProvider>
+            {/* `--app-height` tracks the keyboard on touch devices; `svh` elsewhere. */}
+            <SidebarProvider className="h-(--app-height,100svh)">
+              <AppSidebar />
+              <SidebarInset
+                className={cn(
+                  "min-w-0 overflow-hidden border border-border",
+                  "md:peer-data-[state=collapsed]:border-0",
+                  "md:transition-[margin,border-radius] md:duration-200 md:ease-linear",
+                  isPanelOpen &&
+                    "md:mr-0 md:peer-data-[state=collapsed]:border-r"
+                )}
+              >
+                {children}
+              </SidebarInset>
+              {cardCloseHref && <CardPanel closeHref={cardCloseHref} />}
+            </SidebarProvider>
+          </SearchProvider>
         </CardDropProvider>
       </CardRevealProvider>
     </DeckProvider>

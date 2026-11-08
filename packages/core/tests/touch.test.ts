@@ -19,6 +19,7 @@ const card: Card = {
   stamps: {},
   bodyConflict: null,
   completedAt: null,
+  createdAt: null,
 }
 
 const column: Column = {
@@ -60,6 +61,7 @@ describe("touchCard", () => {
       deleted: 10,
       conflict: 10,
       completed: 10,
+      created: 10,
     })
   })
 

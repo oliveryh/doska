@@ -13,12 +13,12 @@ export function SettingsButton() {
     <>
       <Button
         variant="ghost"
-        size="sm"
-        className="justify-start gap-2 px-2"
+        size="icon-sm"
+        aria-label="Settings"
+        className="shrink-0 text-muted-foreground"
         onClick={() => setOpen(true)}
       >
-        <Settings className="size-4" />
-        <span>Settings</span>
+        <Settings />
       </Button>
       <SettingsModal
         open={open}

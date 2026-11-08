@@ -1,26 +1,37 @@
-import { useBoard, searchCards, type SearchHit } from "@doska/core"
+import {
+  searchCards,
+  useAllCards,
+  useDashboards,
+  type SearchHit,
+} from "@doska/core"
 import { Button, Modal, ModalContent, ModalTitle } from "@doska/ui-kit"
 import { Search, X } from "lucide-react"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useLocation } from "wouter"
 import { useRevealCard } from "@/providers/card-reveal/card-reveal-context"
+import { pullBoards } from "@/lib/pull-boards"
 import { routes } from "@/lib/routes"
 import { SearchResultRow } from "./search-result-row"
 
 const LIST_ID = "search-results"
 const optionId = (index: number) => `search-result-${index}`
 
+type Scope = "all" | "board"
+
 interface IProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  boardId: string
+  /** The open board, or `null` off a board, where only "all" makes sense. */
+  boardId: string | null
 }
 
 export function SearchModal({ open, onOpenChange, boardId }: IProps) {
   const [, navigate] = useLocation()
-  const { data: board } = useBoard(boardId)
+  const { data: entries = [] } = useAllCards(open)
+  const { data: dashboards = [] } = useDashboards()
   const reveal = useRevealCard()
 
+  const [scope, setScope] = useState<Scope>("all")
   const [query, setQuery] = useState("")
   const [activeIndex, setActiveIndex] = useState(0)
   const [lastQuery, setLastQuery] = useState(query)
@@ -28,7 +39,10 @@ export function SearchModal({ open, onOpenChange, boardId }: IProps) {
 
   if (open !== wasOpen) {
     setWasOpen(open)
-    if (open) setQuery("")
+    if (open) {
+      setQuery("")
+      setScope("all")
+    }
   }
 
   if (query !== lastQuery) {
@@ -36,23 +50,54 @@ export function SearchModal({ open, onOpenChange, boardId }: IProps) {
     setActiveIndex(0)
   }
 
+  const boardIds = dashboards.map((d) => d.id).join(",")
+  useEffect(() => {
+    // Search spans every board, and only the open one syncs on its own.
+    if (open && boardIds) pullBoards(boardIds.split(","))
+  }, [open, boardIds])
+
+  const effectiveScope = boardId ? scope : "all"
   const trimmed = query.trim()
+
+  const scoped = useMemo(
+    () =>
+      effectiveScope === "board"
+        ? entries.filter((e) => e.boardId === boardId)
+        : entries,
+    [entries, effectiveScope, boardId]
+  )
+  const origins = useMemo(
+    () =>
+      new Map(
+        entries.map((e) => [
+          e.card.id,
+          { boardId: e.boardId, boardTitle: e.boardTitle },
+        ])
+      ),
+    [entries]
+  )
   const hits = useMemo(
     () =>
-      trimmed === "" || !board
+      trimmed === ""
         ? []
         : searchCards({
-            cards: board.cards,
-            columns: board.columns,
+            cards: scoped.map((e) => e.card),
+            columns: [
+              ...new Map(scoped.map((e) => [e.column.id, e.column])).values(),
+            ],
             query: trimmed,
           }),
-    [board, trimmed]
+    [scoped, trimmed]
   )
 
   function select(hit: SearchHit) {
+    const origin = origins.get(hit.card.id)
+    if (!origin) return
     onOpenChange(false)
     reveal(hit.card.id)
-    navigate(routes.card.to(hit.card.id))
+    // Absolute: the hit can be on any board, and the modal sits outside the
+    // deck's nested router.
+    navigate(`~${routes.deck.to(origin.boardId)}${routes.card.to(hit.card.id)}`)
   }
 
   function onKeyDown(e: React.KeyboardEvent) {
@@ -113,6 +158,22 @@ export function SearchModal({ open, onOpenChange, boardId }: IProps) {
             <X />
           </Button>
         </div>
+        {boardId && (
+          <div className="flex gap-1 border-t px-3 py-1.5">
+            {(["all", "board"] as const).map((value) => (
+              <Button
+                key={value}
+                type="button"
+                size="sm"
+                variant={effectiveScope === value ? "secondary" : "ghost"}
+                aria-pressed={effectiveScope === value}
+                onClick={() => setScope(value)}
+              >
+                {value === "all" ? "All boards" : "This board"}
+              </Button>
+            ))}
+          </div>
+        )}
         <div
           id={LIST_ID}
           role="listbox"
@@ -120,7 +181,9 @@ export function SearchModal({ open, onOpenChange, boardId }: IProps) {
         >
           {trimmed === "" ? (
             <p className="px-3 py-6 text-center text-sm text-muted-foreground">
-              Search by title or notes
+              {effectiveScope === "all"
+                ? "Search every board by title or notes"
+                : "Search this board by title or notes"}
             </p>
           ) : hits.length === 0 ? (
             <p className="px-3 py-6 text-center text-sm text-muted-foreground">
@@ -132,6 +195,11 @@ export function SearchModal({ open, onOpenChange, boardId }: IProps) {
                 key={hit.card.id}
                 id={optionId(index)}
                 hit={hit}
+                boardTitle={
+                  effectiveScope === "all"
+                    ? origins.get(hit.card.id)?.boardTitle
+                    : undefined
+                }
                 active={index === activeIndex}
                 onSelect={() => select(hit)}
                 onHighlight={() => setActiveIndex(index)}

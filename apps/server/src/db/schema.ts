@@ -117,6 +117,7 @@ export const cards = pgTable(
     stamps: jsonb("stamps").$type<Card["stamps"]>().notNull().default({}),
     bodyConflict: jsonb("body_conflict").$type<Card["bodyConflict"]>(),
     completedAt: bigint("completed_at", { mode: "number" }),
+    createdAt: bigint("created_at", { mode: "number" }),
     seq: integer("seq").notNull(),
   },
   (t) => [index("cards_board_seq").on(t.boardId, t.seq)]

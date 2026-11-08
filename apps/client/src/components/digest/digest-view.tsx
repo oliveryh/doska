@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useLocation, useRoute } from "wouter"
 import {
   filterByTags,
@@ -15,15 +15,34 @@ import { routes } from "@/lib/routes"
 import { useDeck } from "@/providers/deck/deck-context"
 import { Digest } from "./digest"
 import { useHiddenBoards } from "./use-hidden-boards"
+import { usePersistedState } from "./use-persisted-state"
+
+const isDigestFilter = (v: unknown): v is DigestFilter =>
+  v === "today" || v === "week"
+const isBoolean = (v: unknown): v is boolean => typeof v === "boolean"
+const isStringArray = (v: unknown): v is string[] =>
+  Array.isArray(v) && v.every((item) => typeof item === "string")
 
 /** Connects the digest to its data, and pulls every board so it isn't reading a
  * partial picture — only the open board syncs during normal use. */
 export function DigestView() {
   const [, navigate] = useLocation()
   const [, params] = useRoute(routes.card.pattern)
-  const [filter, setFilter] = useState<DigestFilter>("week")
-  const [hideDone, setHideDone] = useState(false)
-  const [priorityFilters, setPriorityFilters] = useState<string[]>([])
+  const [filter, setFilter] = usePersistedState<DigestFilter>(
+    "doska:digest-filter",
+    "week",
+    isDigestFilter
+  )
+  const [hideDone, setHideDone] = usePersistedState(
+    "doska:digest-hide-done",
+    false,
+    isBoolean
+  )
+  const [priorityFilters, setPriorityFilters] = usePersistedState<string[]>(
+    "doska:digest-priority-filters",
+    [],
+    isStringArray
+  )
   const { hidden, toggleBoard } = useHiddenBoards()
   const { tagFilters = [], userFilters = [] } = useDeck()
 

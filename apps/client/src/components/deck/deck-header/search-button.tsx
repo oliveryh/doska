@@ -1,30 +1,19 @@
-import { useCallback, useState } from "react"
 import { Button } from "@doska/ui-kit"
 import { Search } from "lucide-react"
-import { SearchModal } from "../../search"
-import { useSearchShortcut } from "@/lib/hooks"
+import { useOpenSearch } from "@/providers/search/search-context"
 
-export function SearchButton({ boardId }: { boardId: string }) {
-  const [open, setOpen] = useState(false)
-
-  useSearchShortcut(useCallback(() => setOpen(true), []))
+export function SearchButton() {
+  const openSearch = useOpenSearch()
 
   return (
-    <>
-      <Button
-        variant="ghost"
-        size="icon-sm"
-        aria-label="Search cards"
-        className="text-muted-foreground"
-        onClick={() => setOpen(true)}
-      >
-        <Search />
-      </Button>
-      <SearchModal
-        open={open}
-        onOpenChange={setOpen}
-        boardId={boardId}
-      />
-    </>
+    <Button
+      variant="ghost"
+      size="icon-sm"
+      aria-label="Search cards"
+      className="text-muted-foreground"
+      onClick={openSearch}
+    >
+      <Search />
+    </Button>
   )
 }

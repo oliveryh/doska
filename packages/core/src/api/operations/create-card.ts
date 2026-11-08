@@ -22,6 +22,7 @@ export async function createCard(columnId: string): Promise<string> {
       null
     )
   const position = generateKeyBetween(null, first)
+  const now = Date.now()
   const card = {
     ...fallbackCard,
     id,
@@ -29,8 +30,9 @@ export async function createCard(columnId: string): Promise<string> {
     position,
     title: "",
     deletedAt: null,
+    createdAt: now,
   }
-  await db.setCard(touchCard(card, CARD_GROUPS))
+  await db.setCard(touchCard(card, CARD_GROUPS, now))
   sync.markDirty("cards", id)
   return id
 }

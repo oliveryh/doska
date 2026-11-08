@@ -234,6 +234,16 @@ export function useIncompleteCounts(excludeBacklog = false) {
   })
 }
 
+/** Not-done cards across every board, split by priority, for the sidebar's
+ * summary. Pass the hide-backlog toggle's state, as for the per-board counts. */
+export function useIncompletePriorityCounts(excludeBacklog = false) {
+  return useQuery({
+    queryKey: keys.incompletePriorityCounts(excludeBacklog),
+    queryFn: () => api.getIncompletePriorityCounts(excludeBacklog),
+    networkMode: "always",
+  })
+}
+
 /** The board an arbitrary card belongs to — see {@link api.getCardDeckId}. */
 export function useCardDeckId(id: string | null) {
   return useQuery({
