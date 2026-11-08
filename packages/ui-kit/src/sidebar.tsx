@@ -116,7 +116,11 @@ function Sidebar({ className, children, ...props }: ComponentProps<"div">) {
             <SheetTitle>Sidebar</SheetTitle>
             <SheetDescription>Displays the mobile sidebar.</SheetDescription>
           </SheetHeader>
-          <div className="flex h-full w-full flex-col p-2">{children}</div>
+          {/* The drawer runs to the top of the screen, under the status bar or
+              notch, so it clears that itself — nothing above it does. */}
+          <div className="flex h-full w-full flex-col p-2 pt-[calc(--spacing(2)+env(safe-area-inset-top))]">
+            {children}
+          </div>
         </SheetContent>
       </Sheet>
     )
