@@ -29,6 +29,8 @@ export function shapeCard(card: Card) {
     })),
     // Epoch ms the card last moved into a done column; null otherwise.
     completedAt: card.completedAt,
+    // Epoch ms the card was created; null for cards from before it was tracked.
+    createdAt: card.createdAt,
   }
 }
 
