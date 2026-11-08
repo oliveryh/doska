@@ -8,6 +8,7 @@ import { usePublishedBoards, useSharedBoards } from "@doska/core"
 import { useAuth } from "@/lib/hooks"
 import { DashboardsList } from "./dashboards-list/dashboards-list"
 import { SidebarAccount } from "./sidebar-account"
+import { useRememberedScroll } from "./use-remembered-scroll"
 import { SettingsButton } from "@/components/settings/settings-button"
 import { UpcomingButton } from "@/components/digest/upcoming-button"
 
@@ -17,10 +18,11 @@ export function AppSidebar() {
   const { data: publishedIds = [] } = usePublishedBoards(authed === true)
 
   const activeDashboardId = useParams().id ?? ""
+  const scrollRef = useRememberedScroll()
 
   return (
     <Sidebar className="ml-1">
-      <SidebarContent className="group/sidebar">
+      <SidebarContent ref={scrollRef} className="group/sidebar">
         <UpcomingButton />
         <DashboardsList
           activeDashboardId={activeDashboardId}
