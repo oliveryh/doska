@@ -36,6 +36,10 @@ export function DashboardsList({
   const { data: nodes = [] } = useSidebarTree()
   const hideBacklog = useHideBacklog()
   const { data: incompleteCounts = {} } = useIncompleteCounts(hideBacklog)
+  const totalIncomplete = Object.values(incompleteCounts).reduce(
+    (sum, count) => sum + count,
+    0
+  )
   const [renamingId, setRenamingId] = useState<string | null>(null)
   const collapsedIds = useCollapsedFolders()
   const rows = flattenTree(nodes, collapsedIds)
@@ -55,7 +59,10 @@ export function DashboardsList({
 
   return (
     <SidebarGroup className="mt-4">
-      <BoardsHeader onFolderCreated={setRenamingId} />
+      <BoardsHeader
+        onFolderCreated={setRenamingId}
+        totalIncomplete={totalIncomplete}
+      />
       <SidebarGroupContent>
         <DragStateProvider value={dragging}>
           <DragDropContext {...responders}>
