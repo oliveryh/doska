@@ -1,6 +1,5 @@
 import {
   searchCards,
-  sync,
   useAllCards,
   useDashboards,
   type SearchHit,
@@ -10,16 +9,12 @@ import { Search, X } from "lucide-react"
 import { useEffect, useMemo, useState } from "react"
 import { useLocation } from "wouter"
 import { useRevealCard } from "@/providers/card-reveal/card-reveal-context"
+import { pullBoards } from "@/lib/pull-boards"
 import { routes } from "@/lib/routes"
 import { SearchResultRow } from "./search-result-row"
 
 const LIST_ID = "search-results"
 const optionId = (index: number) => `search-result-${index}`
-
-/** Only the open board syncs during normal use, so opening search pulls the
- * rest — but not on every ⌘K, which would be a request per board each time. */
-const PULL_INTERVAL_MS = 60_000
-let lastPull = 0
 
 type Scope = "all" | "board"
 
@@ -57,9 +52,8 @@ export function SearchModal({ open, onOpenChange, boardId }: IProps) {
 
   const boardIds = dashboards.map((d) => d.id).join(",")
   useEffect(() => {
-    if (!open || !boardIds || Date.now() - lastPull < PULL_INTERVAL_MS) return
-    lastPull = Date.now()
-    void sync.reconcileBoards(boardIds.split(","))
+    // Search spans every board, and only the open one syncs on its own.
+    if (open && boardIds) pullBoards(boardIds.split(","))
   }, [open, boardIds])
 
   const effectiveScope = boardId ? scope : "all"

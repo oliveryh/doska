@@ -9,7 +9,7 @@ import {
   DeckProvider,
   type DeckContextValue,
 } from "@/providers/deck/deck-context"
-import { useIsPanelOpen, useUndoShortcut } from "@/lib/hooks"
+import { useIsPanelOpen, useSyncOnFocus, useUndoShortcut } from "@/lib/hooks"
 
 interface IProps {
   deck: DeckContextValue
@@ -22,6 +22,9 @@ export function AppShell({ deck, cardCloseHref, children }: IProps) {
 
   // ⌘Z takes back the last delete from anywhere in the app.
   useUndoShortcut()
+
+  // Other boards only sync while open, so catch them up when the window returns.
+  useSyncOnFocus()
 
   return (
     <DeckProvider value={deck}>
