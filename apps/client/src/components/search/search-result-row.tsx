@@ -20,6 +20,8 @@ function Segments({ segments }: { segments: Segment[] }) {
 interface IProps {
   id: string
   hit: SearchHit
+  /** Set when results span boards, to say which one a hit is on. */
+  boardTitle?: string
   active: boolean
   onSelect: () => void
   onHighlight: () => void
@@ -28,6 +30,7 @@ interface IProps {
 export function SearchResultRow({
   id,
   hit,
+  boardTitle,
   active,
   onSelect,
   onHighlight,
@@ -77,6 +80,11 @@ export function SearchResultRow({
           </span>
         )}
       </span>
+      {boardTitle && (
+        <span className="line-clamp-1 max-w-28 shrink-0 text-xs text-muted-foreground">
+          {boardTitle}
+        </span>
+      )}
       {hit.column && (
         <span className="flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground">
           <ColumnSwatch color={hit.column.color} />

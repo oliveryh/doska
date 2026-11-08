@@ -66,7 +66,7 @@ export function DeckHeader({
         >
           <Plus />
         </Button>
-        <SearchButton boardId={boardId} />
+        <SearchButton />
         <HideBacklogButton
           hideBacklog={hideBacklog}
           onToggle={onToggleHideBacklog}
