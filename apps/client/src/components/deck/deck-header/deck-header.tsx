@@ -50,10 +50,10 @@ export function DeckHeader({
         value={title}
         onCommit={onRename}
         label="Board name"
-        className="min-w-40 text-base font-semibold sm:min-w-68"
+        className="min-w-0 flex-1 text-base font-semibold sm:min-w-68 sm:flex-none"
       />
 
-      <div className="ml-auto flex items-center gap-1">
+      <div className="ml-auto flex shrink-0 items-center gap-1">
         <UserFilter boardId={boardId} />
         <Button
           variant="ghost"
