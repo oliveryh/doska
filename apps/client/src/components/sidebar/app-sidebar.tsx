@@ -3,18 +3,13 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
-  SidebarMenu,
 } from "@doska/ui-kit"
 import { usePublishedBoards, useSharedBoards } from "@doska/core"
 import { useAuth } from "@/lib/hooks"
-import { AppSidebarHeader } from "./app-sidebar-header"
 import { DashboardsList } from "./dashboards-list/dashboards-list"
 import { SidebarAccount } from "./sidebar-account"
 import { SettingsButton } from "@/components/settings/settings-button"
-import { TrashButton } from "@/components/trash/trash-button"
 import { UpcomingButton } from "@/components/digest/upcoming-button"
-import { isDesktop } from "@/lib/platform"
 
 export function AppSidebar() {
   const { authed } = useAuth()
@@ -25,14 +20,8 @@ export function AppSidebar() {
 
   return (
     <Sidebar className="ml-1">
-      {!isDesktop() && <AppSidebarHeader />}
-      <SidebarContent className="group/sidebar mt-6">
-        <SidebarGroup>
-          <SidebarMenu>
-            <UpcomingButton />
-            <TrashButton />
-          </SidebarMenu>
-        </SidebarGroup>
+      <SidebarContent className="group/sidebar">
+        <UpcomingButton />
         <DashboardsList
           activeDashboardId={activeDashboardId}
           sharedIds={sharedIds}
