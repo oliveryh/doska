@@ -29,8 +29,12 @@ export function AppSidebar() {
         />
       </SidebarContent>
       <SidebarFooter>
-        <SettingsButton />
-        <SidebarAccount />
+        <div className="flex items-center gap-1">
+          <div className="min-w-0 flex-1">
+            <SidebarAccount />
+          </div>
+          <SettingsButton />
+        </div>
       </SidebarFooter>
     </Sidebar>
   )
