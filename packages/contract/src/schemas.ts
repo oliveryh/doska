@@ -26,6 +26,7 @@ export const CARD_GROUPS = [
   "deleted",
   "conflict",
   "completed",
+  "created",
 ] as const
 
 export const COLUMN_GROUPS = [
@@ -95,6 +96,11 @@ export const CardSchema = z.object({
    * (which also moves on reordering), so it's a reliable completion marker.
    */
   completedAt: z.number().nullable().default(null),
+  /**
+   * When the card was created; `null` for cards that predate the field. Set
+   * once on creation and never rewritten, unlike `updatedAt`.
+   */
+  createdAt: z.number().nullable().default(null),
 })
 
 /** Exhaustive on purpose: a field without a group is a type error. */
@@ -117,6 +123,7 @@ export const CARD_FIELD_GROUP: Record<
   deletedAt: "deleted",
   bodyConflict: "conflict",
   completedAt: "completed",
+  createdAt: "created",
 }
 
 export const ColumnSchema = z.object({

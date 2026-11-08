@@ -327,6 +327,7 @@ export async function remoteAddCard(
           stamps: {},
           bodyConflict: null,
           completedAt: null,
+          createdAt: null,
         },
       },
     ],

@@ -100,9 +100,11 @@ const cardAt = (at: number, fields: Partial<Card> = {}): Card => ({
     deleted: at,
     conflict: at,
     completed: at,
+    created: at,
   },
   bodyConflict: null,
   completedAt: null,
+  createdAt: null,
   ...fields,
 })
 

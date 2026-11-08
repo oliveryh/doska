@@ -162,6 +162,13 @@
       "when": 1793300925534,
       "tag": "0022_add_card_completed_at",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1794139996736,
+      "tag": "0023_add_card_created_at",
+      "breakpoints": true
     }
   ]
 }
