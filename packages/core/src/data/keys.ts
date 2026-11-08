@@ -23,6 +23,10 @@ export const keys = {
    * Keyed on `excludeBacklog` too, so toggling it doesn't serve a stale count. */
   incompleteCounts: (excludeBacklog: boolean) =>
     ["digest", "incomplete-counts", excludeBacklog] as const,
+  /** Not-done card count per priority across every board. Under the digest
+   * prefix, so any card change refreshes it. */
+  incompletePriorityCounts: (excludeBacklog: boolean) =>
+    ["digest", "incomplete-priority-counts", excludeBacklog] as const,
   cardDeck: (id: string) => ["card-deck", id] as const,
   /** The bare key is the invalidation prefix for every card's column. */
   cardCols: ["card-col"] as const,

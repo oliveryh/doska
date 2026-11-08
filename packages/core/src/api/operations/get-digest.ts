@@ -231,18 +231,60 @@ export function groupBoardCards(
   return groups
 }
 
-/** Not-done card count per board, for the sidebar's per-board badge.
- * `excludeBacklog` drops cards sitting in a Backlog column too, to match
- * what's actually visible when the hide-backlog toggle is on. */
+/** Every not-done card. `excludeBacklog` drops cards sitting in a Backlog
+ * column too, to match what's actually visible when the hide-backlog toggle
+ * is on. */
+async function getIncompleteCards(excludeBacklog: boolean) {
+  const entries = await getAllLiveCards()
+  return entries.filter(
+    (entry) =>
+      !entry.isDone &&
+      !(excludeBacklog && entry.columnTitle === BACKLOG_COLUMN_TITLE)
+  )
+}
+
+/** Not-done card count per board, for the sidebar's per-board badge. */
 export async function getIncompleteCounts(
   excludeBacklog = false
 ): Promise<Record<string, number>> {
-  const entries = await getAllLiveCards()
   const counts: Record<string, number> = {}
-  for (const entry of entries) {
-    if (entry.isDone) continue
-    if (excludeBacklog && entry.columnTitle === BACKLOG_COLUMN_TITLE) continue
+  for (const entry of await getIncompleteCards(excludeBacklog)) {
     counts[entry.boardId] = (counts[entry.boardId] ?? 0) + 1
+  }
+  return counts
+}
+
+/** Not-done cards across every board, split by priority. `none` also takes a
+ * retired or unrecognised priority value, so the four parts add up to `total`. */
+export interface PriorityCounts {
+  total: number
+  high: number
+  medium: number
+  low: number
+  none: number
+}
+
+export async function getIncompletePriorityCounts(
+  excludeBacklog = false
+): Promise<PriorityCounts> {
+  const counts: PriorityCounts = {
+    total: 0,
+    high: 0,
+    medium: 0,
+    low: 0,
+    none: 0,
+  }
+  for (const { card } of await getIncompleteCards(excludeBacklog)) {
+    counts.total++
+    switch (card.priority) {
+      case "high":
+      case "medium":
+      case "low":
+        counts[card.priority]++
+        break
+      default:
+        counts.none++
+    }
   }
   return counts
 }
