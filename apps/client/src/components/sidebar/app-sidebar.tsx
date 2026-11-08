@@ -1,12 +1,9 @@
 import { useParams } from "wouter"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-} from "@doska/ui-kit"
+import { Sidebar, SidebarContent, SidebarFooter } from "@doska/ui-kit"
 import { usePublishedBoards, useSharedBoards } from "@doska/core"
 import { useAuth } from "@/lib/hooks"
 import { DashboardsList } from "./dashboards-list/dashboards-list"
+import { PrioritySummary } from "./priority-summary"
 import { SidebarAccount } from "./sidebar-account"
 import { useRememberedScroll } from "./use-remembered-scroll"
 import { SettingsButton } from "@/components/settings/settings-button"
@@ -31,6 +28,7 @@ export function AppSidebar() {
         />
       </SidebarContent>
       <SidebarFooter>
+        <PrioritySummary />
         <div className="flex items-center gap-1">
           <div className="min-w-0 flex-1">
             <SidebarAccount />
